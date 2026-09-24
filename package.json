@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:ci": "node --test tests/admin-routing.test.mjs"
+    "test:ci": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

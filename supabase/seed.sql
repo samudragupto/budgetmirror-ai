@@ -1,4 +1,6 @@
 -- BudgetMirror AI — Sampurna District seed (idempotent; safe to re-run)
+-- Run AFTER supabase/schema.sql. If this errors with "relation public.wards does
+-- not exist", the schema file did not apply — re-run schema.sql first.
 -- Mirrors lib/demo-data.ts so Supabase mode and demo mode tell one story.
 -- Central story: Ward 5 (Ujjwal Nagar) water demand 93 vs 11% budget → alignment 31.
 

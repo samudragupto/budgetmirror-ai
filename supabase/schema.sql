@@ -1,5 +1,7 @@
 -- BudgetMirror AI — Supabase PostgreSQL schema (MVP + stretch tables)
--- Run in the Supabase SQL editor (or `supabase db push` if using the CLI).
+-- Run this entire file first in the SQL Editor (or `supabase db push`).
+-- Then run supabase/seed.sql. Creating an Auth user is not enough for /admin:
+-- run supabase/grant_admin.sql with that user's email so profiles.role is official.
 -- Idempotent: safe to re-run (CREATE IF NOT EXISTS + policy drops).
 
 -- ── Helper: updated_at trigger ──────────────────────────────────────
@@ -39,6 +41,41 @@ create table if not exists public.profiles (
   organization text,
   created_at timestamptz not null default now()
 );
+
+-- Auth sign-up creates a citizen row only. Official roles are granted in SQL
+-- (see supabase/grant_admin.sql) so users cannot self-promote via metadata.
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (id, full_name, role)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
+    'citizen'
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+revoke all on function public.handle_new_user() from public;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- Existing Auth users (created before this trigger) get a citizen profile.
+-- Official promotion still requires supabase/grant_admin.sql.
+insert into public.profiles (id, full_name, role)
+select
+  u.id,
+  coalesce(u.raw_user_meta_data->>'full_name', split_part(u.email, '@', 1)),
+  'citizen'
+from auth.users u
+on conflict (id) do nothing;
 
 -- ── Citizen reports ──────────────────────────────────────────────────
 create table if not exists public.citizen_reports (
@@ -206,10 +243,10 @@ drop policy if exists "public read allocations" on public.budget_allocations;
 create policy "public read allocations" on public.budget_allocations for select using (true);
 
 drop policy if exists "public read projects" on public.projects;
-create policy "public read projects" for select using (true);
+create policy "public read projects" on public.projects for select using (true);
 
 drop policy if exists "public read project validations" on public.project_validations;
-create policy "public read project validations" for select using (true);
+create policy "public read project validations" on public.project_validations for select using (true);
 
 drop policy if exists "anon insert project validations" on public.project_validations;
 create policy "anon insert project validations" on public.project_validations
@@ -219,7 +256,7 @@ drop policy if exists "public read metrics" on public.ward_category_metrics;
 create policy "public read metrics" on public.ward_category_metrics for select using (true);
 
 drop policy if exists "public read report validations" on public.report_validations;
-create policy "public read report validations" for select using (true);
+create policy "public read report validations" on public.report_validations for select using (true);
 
 -- Official roles come only from profiles, never from user-editable auth metadata.
 -- SECURITY DEFINER avoids RLS recursion; this no-argument function only checks auth.uid().
