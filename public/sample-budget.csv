@@ -1,0 +1,13 @@
+ward_name,financial_year,category,sub_category,allocated_amount,spent_amount,project_name,project_status
+Ujjwal Nagar,2025-26,Water Supply,Pipeline maintenance,825000,210000,Ujjwal Nagar pipeline rehabilitation (proposed),Planned
+Ujjwal Nagar,2025-26,Electricity,Decorative / festival lighting,4050000,3820000,Ujjwal Nagar decorative lighting,Completed
+Ujjwal Nagar,2025-26,Roads & Mobility,Lane resurfacing,1200000,640000,,Planned
+Ujjwal Nagar,2025-26,Waste Management,Collection contract,900000,500000,,Planned
+Ujjwal Nagar,2025-26,Healthcare,Sub-centre upkeep,525000,180000,,Planned
+Adarsh Nagar,2025-26,Roads & Mobility,Arterial repair,3200000,2100000,Adarsh Nagar arterial resurfacing,In Progress
+Adarsh Nagar,2025-26,Water Supply,Tank chlorination,600000,420000,,Planned
+Nadi Kinara,2025-26,Sanitation & Drainage,Nullah desilting,1800000,450000,Nadi Kinara nullah desilting (Phase 2),Delayed
+Gadhi Mohalla,2025-26,Education,School maintenance,250000,40000,,Planned
+Harit Vihar,2025-26,Waste Management,Collection contract,700000,380000,Harit Vihar segregated collection pilot,Completed
+Shantinagar,2025-26,Public Safety,Streetlight repair,410000,120000,Station Road streetlight revival,Funded
+Market Road,2025-26,Healthcare,PHC staffing support,640000,190000,,Planned

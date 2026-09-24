@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Civic Mirror design system ---------- */
+:root {
+  --ink: #0b1f33;
+  --paper: #f4efe6;
+  --paper-soft: #faf7f0;
+  --teal: #0f766e;
+  --coral: #c45c26;
+  --gold: #b98a2f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper-50 text-ink antialiased dark:bg-ink-950 dark:text-paper;
+  font-feature-settings: "ss01";
+}
+
+/* Ledger rules: thin horizontal rules like a public accounts book */
+.ledger-rule {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 27px,
+    rgba(11, 31, 51, 0.07) 27px,
+    rgba(11, 31, 51, 0.07) 28px
+  );
+}
+.dark .ledger-rule {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 27px,
+    rgba(244, 239, 230, 0.06) 27px,
+    rgba(244, 239, 230, 0.06) 28px
+  );
+}
+
+/* Cadastral watermark grid for hero / map-adjacent panels */
+.cadastral-grid {
+  background-image:
+    linear-gradient(rgba(11, 31, 51, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 31, 51, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.dark .cadastral-grid {
+  background-image:
+    linear-gradient(rgba(244, 239, 230, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 239, 230, 0.07) 1px, transparent 1px);
+}
+
+/* Gold hairline reserved for "budget moments" */
+.hairline-gold {
+  border-top: 2px solid var(--gold);
+}
+
+/* Ledger cards get a ruled top edge */
+.ledger-card {
+  position: relative;
+}
+.ledger-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold) 0%, transparent 70%);
+  opacity: 0.7;
+  border-radius: 2px;
+}
+
+/* Score bars animate once on view */
+@keyframes scorebar-grow {
+  from { width: 0; }
+}
+.scorebar-fill {
+  animation: scorebar-grow 700ms ease-out both;
+}
+
+/* Accessibility: visible focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 16px;
+  border-radius: 0 0 8px 0;
+  font-size: 14px;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Leaflet popup legibility in dark mode */
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: #12293f;
+  color: #f4efe6;
+}
+.dark .leaflet-bar a {
+  background: #12293f;
+  color: #f4efe6;
+}
+
+/* Print stylesheet for the policy brief */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+}
