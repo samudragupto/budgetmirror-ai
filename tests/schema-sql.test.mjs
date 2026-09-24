@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -14,8 +14,8 @@ describe("supabase SQL bootstrap", () => {
   it("CREATE POLICY statements include ON <table> (SQL Editor otherwise rolls back the whole schema)", () => {
     const files = [
       "supabase/schema.sql",
-      "supabase/migrations/20260924_admin_authorization.sql",
-      "supabase/migrations/20260924_fix_rls_policies_and_profile_bootstrap.sql",
+      "supabase/migrations/20260924000000_admin_authorization.sql",
+      "supabase/migrations/20260924000100_fix_rls_policies_and_profile_bootstrap.sql",
     ];
     let count = 0;
     for (const file of files) {
@@ -41,6 +41,26 @@ describe("supabase SQL bootstrap", () => {
     assert.ok(wards >= 0, "wards table");
     assert.ok(profiles > wards, "profiles after wards");
     assert.ok(rls > profiles, "RLS after tables");
+  });
+
+  it("migration chain has unique versions and bootstraps tables before hotfixes", () => {
+    const migrationDir = join(root, "supabase/migrations");
+    const migrations = readdirSync(migrationDir)
+      .filter((file) => file.endsWith(".sql"))
+      .sort();
+    const versions = migrations.map((file) => file.split("_", 1)[0]);
+
+    assert.equal(new Set(versions).size, versions.length, "migration versions must be unique");
+    assert.match(
+      readFileSync(join(migrationDir, migrations[0]), "utf8"),
+      /create table if not exists public\.profiles/i,
+      "the first migration must bootstrap profiles for an empty Preview database",
+    );
+    assert.ok(
+      migrations.indexOf("20260923000000_initial_schema.sql") <
+        migrations.indexOf("20260924000000_admin_authorization.sql"),
+      "initial schema must run before the admin authorization hotfix",
+    );
   });
 
   it("grant_admin.sql requires an explicit email and upserts an official role", () => {

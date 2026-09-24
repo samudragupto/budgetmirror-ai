@@ -92,7 +92,7 @@ Public-ledger-meets-field-journalism: **Newsreader** serif headings, **IBM Plex 
 ### 1. Supabase
 
 1. Create a free project at supabase.com.
-2. For a new project, paste **the entire** `supabase/schema.sql` into the SQL Editor and run it, then run `supabase/seed.sql`. Do not run seed first — `public.wards` is created by the schema. For an existing deployment, apply `supabase/migrations/` in filename order before deploying this hotfix and review existing official profiles for unauthorized grants.
+2. For a manually managed new project, paste **the entire** `supabase/schema.sql` into the SQL Editor and run it, then run `supabase/seed.sql`. Do not run seed first — `public.wards` is created by the schema. Supabase GitHub integration and Preview branches instead rebuild from `supabase/migrations/`; the first migration is the complete baseline, so do not paste `schema.sql` into a Preview branch. For an existing deployment, apply migrations in filename order and review existing official profiles for unauthorized grants.
 3. Authentication → Users → add a user (email/password). That only creates `auth.users`. Open `supabase/grant_admin.sql`, replace `REPLACE_WITH_OFFICIAL_EMAIL`, and run it so `public.profiles.role` is `admin` (or `policymaker`). Signing in without that row is rejected as a non-official account.
 4. Copy Project URL + `anon` key + `service_role` key.
 
