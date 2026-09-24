@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:ci": "node --test tests/admin-routing.test.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

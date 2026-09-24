@@ -2,12 +2,9 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { isSupabaseConfigured, supabaseUrl, supabaseAnonKey } from "@/lib/supabase/config";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-
-export const isSupabaseConfiguredServer =
-  url.length > 0 && !url.includes("example") && anon.length > 0 && !anon.startsWith("dummy");
+export const isSupabaseConfiguredServer = isSupabaseConfigured;
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
@@ -15,8 +12,8 @@ type CookieToSet = { name: string; value: string; options: CookieOptions };
 export async function createClient() {
   const cookieStore = await cookies();
   return createServerClient(
-    url || "https://example.supabase.co",
-    anon || "dummy-anon-key-for-ci",
+    supabaseUrl || "https://example.supabase.co",
+    supabaseAnonKey || "dummy-anon-key-for-ci",
     {
       cookies: {
         getAll() {
@@ -43,5 +40,5 @@ export async function createServiceClient() {
     return null;
   }
   const { createClient: createAdminClient } = await import("@supabase/supabase-js");
-  return createAdminClient(url, serviceKey, { auth: { persistSession: false } });
+  return createAdminClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
 }

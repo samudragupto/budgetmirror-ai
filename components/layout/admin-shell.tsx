@@ -52,9 +52,8 @@ export function AdminShell({
           <Database className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden="true" />
           <p>
             <strong>Demo data mode.</strong> Supabase isn&apos;t connected, so you&apos;re viewing
-            the seeded Sampurna District story. Reads work fully; writes are held in memory for
-            this session. Connect <code className="font-mono text-xs">NEXT_PUBLIC_SUPABASE_URL</code> for
-            live data.
+            the seeded Sampurna District story locally. Reads work; demo write receipts are not
+            persisted. Production requires Supabase and an official account.
           </p>
         </div>
       )}
