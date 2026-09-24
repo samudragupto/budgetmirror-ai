@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceClient, isSupabaseConfiguredServer } from "@/lib/supabase/server";
 import { recalculateMetricsPure } from "@/lib/metrics";
+import { adminMutationError } from "@/lib/admin-auth";
 
 const Body = z.object({
   wardId: z.string().optional(),
@@ -10,6 +11,9 @@ const Body = z.object({
 
 /** POST /api/recalculate-metrics — recompute ward_category_metrics deterministically. */
 export async function POST(req: Request) {
+  const denied = await adminMutationError();
+  if (denied) return denied;
+
   let body: z.infer<typeof Body> = { period: "2025-26" };
   try {
     const json = await req.json().catch(() => ({}));

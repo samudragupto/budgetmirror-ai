@@ -4,6 +4,7 @@ import { parseBudgetCsv, matchWard } from "@/lib/csv-parser";
 import { extractBudgetFromText } from "@/lib/gemini";
 import { createServiceClient, isSupabaseConfiguredServer } from "@/lib/supabase/server";
 import { recalculateMetricsPure } from "@/lib/metrics";
+import { adminMutationError } from "@/lib/admin-auth";
 
 /**
  * POST /api/upload-budget — parse only (multipart file). Returns review rows.
@@ -13,6 +14,9 @@ import { recalculateMetricsPure } from "@/lib/metrics";
  */
 
 export async function POST(req: Request) {
+  const denied = await adminMutationError();
+  if (denied) return denied;
+
   let file: File | null = null;
   let financialYear = "2025-26";
   try {
@@ -101,6 +105,9 @@ const ApproveBody = z.object({
 });
 
 export async function PUT(req: Request) {
+  const denied = await adminMutationError();
+  if (denied) return denied;
+
   let body: z.infer<typeof ApproveBody>;
   try {
     body = ApproveBody.parse(await req.json());

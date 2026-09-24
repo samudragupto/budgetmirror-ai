@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceClient, isSupabaseConfiguredServer } from "@/lib/supabase/server";
 import { REPORT_STATUSES } from "@/lib/constants";
+import { adminMutationError } from "@/lib/admin-auth";
 
 const PatchBody = z.object({
   id: z.string().min(1),
@@ -10,6 +11,9 @@ const PatchBody = z.object({
 
 /** PATCH /api/reports — acknowledge / resolve / flag a report (official action). */
 export async function PATCH(req: Request) {
+  const denied = await adminMutationError();
+  if (denied) return denied;
+
   let body: z.infer<typeof PatchBody>;
   try {
     body = PatchBody.parse(await req.json());

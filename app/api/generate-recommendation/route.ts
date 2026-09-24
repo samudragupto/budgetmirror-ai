@@ -3,6 +3,7 @@ import { z } from "zod";
 import { generateRecommendation, explainMismatch } from "@/lib/gemini";
 import { createServiceClient, isSupabaseConfiguredServer } from "@/lib/supabase/server";
 import { demoMetrics } from "@/lib/demo-data";
+import { adminMutationError } from "@/lib/admin-auth";
 
 const Body = z.object({
   wardId: z.string().min(1),
@@ -16,6 +17,9 @@ const Body = z.object({
  * Falls back to template prose when AI is unavailable.
  */
 export async function POST(req: Request) {
+  const denied = await adminMutationError();
+  if (denied) return denied;
+
   let body: z.infer<typeof Body>;
   try {
     body = Body.parse(await req.json());

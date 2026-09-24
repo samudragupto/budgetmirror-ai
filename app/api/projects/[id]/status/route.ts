@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceClient, isSupabaseConfiguredServer } from "@/lib/supabase/server";
 import { PROJECT_STATUSES } from "@/lib/constants";
+import { adminMutationError } from "@/lib/admin-auth";
 
 const Body = z.object({ status: z.enum(PROJECT_STATUSES) });
 
 /** PATCH /api/projects/:id/status — move a project along its lifecycle. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await adminMutationError();
+  if (denied) return denied;
+
   const { id } = await params;
   let body: z.infer<typeof Body>;
   try {

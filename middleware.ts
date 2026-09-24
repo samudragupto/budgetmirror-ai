@@ -1,16 +1,11 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-/**
- * Refresh Supabase session cookies on every request.
- * Admin authz itself is enforced in app/admin/layout.tsx (server-side),
- * so demo mode (no Supabase configured) keeps working for the hackathon.
- */
+/** Refresh SSR cookies and block unauthorized admin pages before RSC renders them. */
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request);
-  return response ?? NextResponse.next({ request });
+  return updateSession(request);
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: ["/((?!_next/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map|woff2?|ttf|pdf|csv)$).*)"],
 };
