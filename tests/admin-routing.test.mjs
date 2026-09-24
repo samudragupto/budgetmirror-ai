@@ -381,7 +381,10 @@ describe("documentation and database policy guardrails", () => {
   });
 
   it("prevents citizen profile self-promotion and direct non-admin writes in the migration", () => {
-    const sql = readFileSync(join(root, "supabase/migrations/20260924_admin_authorization.sql"), "utf8");
+    const sql = readFileSync(
+      join(root, "supabase/migrations/20260924000000_admin_authorization.sql"),
+      "utf8",
+    );
     assert.match(sql, /for insert with check \(auth\.uid\(\) = id and role = 'citizen'\)/);
     for (const table of ["citizen_reports", "budget_allocations", "budget_uploads", "projects", "ward_category_metrics"]) {
       assert.match(sql, new RegExp(`create policy "official [^"]+" on public\\.${table}\\s+for (?:all|update) using \\(public\\.is_official\\(\\)\\)`));
